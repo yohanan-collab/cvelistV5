@@ -1,0 +1,30 @@
+[
+    {
+        "id": "CVE-2024-11394",
+        "title": "CVE-2024-11394 - Hugging Face Transformers Trax Model Deserialization Remote Code Execution Vulnerability",
+        "cvss_score": 8.8,
+        "severity": "HIGH",
+        "cisa": null
+    },
+    {
+        "id": "CVE-2024-11393",
+        "title": "CVE-2024-11393 - Hugging Face Transformers MaskFormer Deserialization of Untrusted Data Remote Code Execution",
+        "cvss_score": 8.8,
+        "severity": "HIGH",
+        "cisa": null
+    },
+    {
+        "id": "CVE-2024-11392",
+        "title": "CVE-2024-11392 - Hugging Face Transformers MobileViTV2 Unvalidated Deserialization Remote Code Execution (RCE)",
+        "cvss_score": 8.8,
+        "severity": "HIGH",
+        "cisa": null
+    },
+    {
+        "id": "CVE-2024-10220",
+        "title": "CVE-2024-10220 - The Kubernetes kubelet component allows arbitrary ",
+        "cvss_score": 8.1,
+        "severity": "HIGH",
+        "cisa": null
+    }
+]

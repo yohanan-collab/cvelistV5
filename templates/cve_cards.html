@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>CVEs Critiques</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+    <meta http-equiv="refresh" content="3600">
+
+</head>
+<body>
+    <div class="main-header">
+        <img src="{{ url_for('static', filename='image.png') }}" alt="icon" class="icon-small">
+        <h1>CVEs Critiques</h1>
+    </div>
+    
+       
+    
+    <div class="container">
+        {{ cards_html | safe }}
+    </div>
+</body>
+</html>
