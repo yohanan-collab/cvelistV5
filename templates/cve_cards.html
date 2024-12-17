@@ -8,15 +8,28 @@
 
 </head>
 <body>
-    <div class="main-header">
-        <img src="{{ url_for('static', filename='image.png') }}" alt="icon" class="icon-small">
-        <h1>CVEs Critiques</h1>
-    </div>
-    
-       
-    
     <div class="container">
-        {{ cards_html | safe }}
+        <div class="header-container">
+            <div class="main-header">
+                <img src="{{ url_for('static', filename='image.png') }}" alt="icon" class="icon-small">
+                <h1>CVEs Critiques</h1>
+            </div>
+            <form method="GET" action="/">
+                <div class="fx fx-gap">
+                    <div>
+                        <input type="text" name="q" placeholder="Search" />
+                    </div>
+                    <div id="search-icon">
+                        <button type="submit">
+                            <div id="search-icon-circle"></div>
+                            <span><i class="fas fa-search"></i></span>
+                        </button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    {{ cards_html | safe }}
+    
     </div>
 </body>
 </html>

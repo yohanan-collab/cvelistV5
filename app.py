@@ -1,4 +1,4 @@
-from flask import Flask, render_template, render_template_string
+from flask import Flask, render_template, render_template_string, request
 import requests
 import json
 import os
@@ -186,23 +186,25 @@ def format_cve_data(data, title, cvss_score, severity, cisa):
 
 @app.route('/')
 def display_cve_cards():
+    query = request.args.get('q')  # Récupération de la recherche
     cve_data = fetch_cve_data()
-    high_critical_cve_ids = filter_high_critical_cves(cve_data)
-    update_cve_ids_file(high_critical_cve_ids)
-
+    high_critical_cves = filter_high_critical_cves(cve_data)
     cve_cards = []
-    for cve in high_critical_cve_ids:
-        cve_id = cve['id']
-        cvss_score = cve['cvss_score']
-        severity = cve['severity']
-        title = cve['title']
-        cisa = cve['cisa']
-        file_path = find_cve_file(cve_id, os.getcwd())
+
+    # Filtrage basé sur le paramètre de recherche
+    for cve in high_critical_cves:
+        if query and query.strip() and query.lower() not in cve['id'].lower():
+            continue  # Exclut les CVEs qui ne correspondent pas à la recherche
+        file_path = find_cve_file(cve['id'], os.getcwd())
         if file_path:
             data = read_json(file_path)
-            card_html = format_cve_data(data, title, cvss_score, severity, cisa)
+            card_html = format_cve_data(data, cve['title'], cve['cvss_score'], cve['severity'], cve['cisa'])
             if card_html:
                 cve_cards.append(card_html)
+
+    # Si aucune carte n'est trouvée
+    if not cve_cards and query:
+        cve_cards = ["<div class='no-result'>Aucun CVE trouvé pour la recherche.</div>"]
 
     return render_template('cve_cards.html', cards_html=''.join(cve_cards))
 
