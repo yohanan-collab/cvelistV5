@@ -105,9 +105,8 @@ def format_cve_data(data, title, cvss_score, severity, cisa):
         cvss_class = "cvss-high" if severity == "HIGH" else "cvss-critical" if severity == "CRITICAL" else "cvss-low"
 
         affected_products = f"{affected.get('vendor', 'Unknown')} {affected.get('product', 'Unknown')}"
-        if 'versions' in affected:
-            affected_products += " (" + ", ".join(v['version'] for v in affected['versions']) + ")"
-
+        
+        version_affect = ", ".join(v['version'] for v in affected['versions'])
         return f"""
             <div class="cve-card">
                 <div class="cve-header">
@@ -163,8 +162,8 @@ def format_cve_data(data, title, cvss_score, severity, cisa):
                 </div>
 
                 <div class="meta-item">
-                    <span class="label">Découverte:</span>
-                    <div>{discovery_method}</div>
+                    <span class="label">Versions affectées:</span>
+                    <div>{version_affect}</div>
                 </div>
 
                 <div class="meta-item">
