@@ -6,7 +6,6 @@ import glob
 
 app = Flask(__name__)
 
-# Fetch CVE data from API
 def fetch_cve_data():
     url = "https://cvefeed.io/api/user/products/cve-feed"
     headers = {'Authorization': 'Token 3657650656526e135b439aa5e3800de5f0c0fa5d'}
@@ -38,11 +37,11 @@ def filter_high_critical_cves(cve_data):
 def update_cve_ids_file(cve_list):
     """
     Met à jour le fichier JSON avec les nouveaux CVE et leurs scores CVSS.
+    Les nouvelles entrées sont ajoutées en haut du fichier.
     """
     file_path = 'high_critical_cve_ids.json'
     existing_data = []
 
-    # Charger les données existantes
     if os.path.exists(file_path):
         with open(file_path, 'r') as file:
             try:
@@ -50,37 +49,27 @@ def update_cve_ids_file(cve_list):
             except json.JSONDecodeError:
                 print("Error decoding JSON. Using an empty list.")
 
-    # S'assurer que les données existantes sont une liste de dictionnaires
-    if all(isinstance(item, dict) for item in existing_data):
-        existing_ids = {cve['id'] for cve in existing_data}
-    else:
-        # Conversion si les données existantes ne sont que des ID
-        existing_ids = set(existing_data)
-        existing_data = [{"id": cve_id, "cvss_score": "N/A"} for cve_id in existing_ids]
+    if not all(isinstance(item, dict) for item in existing_data):
+        existing_data = []
 
-    # Ajouter uniquement les nouvelles entrées
-    new_cves = []
-    for cve in cve_list:
-        if cve['id'] not in existing_ids:
-            new_cves.append(cve)
+    existing_ids = {cve['id'] for cve in existing_data}
+    new_cves = [cve for cve in cve_list if cve['id'] not in existing_ids]
 
     if new_cves:
-        updated_data = existing_data + new_cves
+        updated_data = new_cves + existing_data
         with open(file_path, 'w') as file:
             json.dump(updated_data, file, indent=4)
-        print(f"Added {len(new_cves)} new CVE(s) with CVSS scores.")
+        print(f"Added {len(new_cves)} new CVE(s) at the top of the file.")
     else:
         print("No new CVEs to add.")
 
 
 
-# Find CVE JSON file in subdirectories
 def find_cve_file(cve_id, root_dir):
     pattern = os.path.join(root_dir, '**', f'{cve_id}.json')
     matches = glob.glob(pattern, recursive=True)
     return matches[0] if matches else None
 
-# Read JSON data
 def read_json(file_path):
     with open(file_path, 'r') as file:
         return json.load(file)
@@ -101,7 +90,6 @@ def format_cve_data(data, title, cvss_score, severity, cisa):
 
         
 
-        # Déterminer la classe CSS pour la gravité
         cvss_class = "cvss-high" if severity == "HIGH" else "cvss-critical" if severity == "CRITICAL" else "cvss-low"
 
         affected_products = f"{affected.get('vendor', 'Unknown')} {affected.get('product', 'Unknown')}"
@@ -185,27 +173,39 @@ def format_cve_data(data, title, cvss_score, severity, cisa):
 
 @app.route('/')
 def display_cve_cards():
-    query = request.args.get('q')  # Récupération de la recherche
-    cve_data = fetch_cve_data()
-    high_critical_cves = filter_high_critical_cves(cve_data)
+    query = request.args.get('q', "").strip().lower()
+
+    file_path = 'high_critical_cve_ids.json'
+    if os.path.exists(file_path):
+        with open(file_path, 'r') as file:
+            high_critical_cves_file = json.load(file)
+    else:
+        high_critical_cves_file = []
+
     cve_cards = []
 
-    # Filtrage basé sur le paramètre de recherche
-    for cve in high_critical_cves:
-        if query and query.strip() and query.lower() not in cve['id'].lower():
-            continue  # Exclut les CVEs qui ne correspondent pas à la recherche
-        file_path = find_cve_file(cve['id'], os.getcwd())
-        if file_path:
-            data = read_json(file_path)
-            card_html = format_cve_data(data, cve['title'], cve['cvss_score'], cve['severity'], cve['cisa'])
+    for cve in high_critical_cves_file:
+        cve_id = cve.get('id', "N/A")
+        title = cve.get('title', "Titre non disponible")
+        cvss_score = cve.get('cvss_score', "N/A")
+        severity = cve.get('severity', "N/A")
+        cisa = cve.get('cisa', "N/A")
+
+        if query and query not in cve_id.lower() and query not in title.lower():
+            continue
+
+        file_path_cve_id = find_cve_file(cve_id, os.getcwd())
+        if file_path_cve_id:
+            data = read_json(file_path_cve_id)
+            card_html = format_cve_data(data, title, cvss_score, severity, cisa)
             if card_html:
                 cve_cards.append(card_html)
 
-    # Si aucune carte n'est trouvée
     if not cve_cards and query:
-        cve_cards = ["<div class='no-result'>Aucun CVE trouvé pour la recherche.</div>"]
+        cve_cards.append("<div class='no-result'>Aucun CVE trouvé pour la recherche.</div>")
 
     return render_template('cve_cards.html', cards_html=''.join(cve_cards))
+
 
 if __name__ == '__main__':
     app.run(debug=True)

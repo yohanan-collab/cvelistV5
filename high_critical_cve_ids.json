@@ -1,5 +1,12 @@
 [
     {
+        "id": "CVE-2024-50379",
+        "title": "CVE-2024-50379 - Apache Tomcat TOCTOU Race Condition RCE on Case Insensitive File Systems",
+        "cvss_score": 9.8,
+        "severity": "CRITICAL",
+        "cisa": null
+    },
+    {
         "id": "CVE-2024-11394",
         "title": "CVE-2024-11394 - Hugging Face Transformers Trax Model Deserialization Remote Code Execution Vulnerability",
         "cvss_score": 8.8,
