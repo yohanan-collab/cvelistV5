@@ -1,5 +1,33 @@
 [
     {
+        "id": "CVE-2024-46981",
+        "title": "CVE-2024-46981 - Redis Lua Scripting Remote Code Execution Vulnerability",
+        "cvss_score": 7.0,
+        "severity": "HIGH",
+        "cisa": null
+    },
+    {
+        "id": "CVE-2024-5594",
+        "title": "CVE-2024-5594 - OpenVPN PATH Injection Vulnerability",
+        "cvss_score": 9.1,
+        "severity": "CRITICAL",
+        "cisa": null
+    },
+    {
+        "id": "CVE-2024-56337",
+        "title": "CVE-2024-56337 - Apache Tomcat CaseInsensitive TOCTOU Race Condition Vulnerability",
+        "cvss_score": 9.8,
+        "severity": "CRITICAL",
+        "cisa": null
+    },
+    {
+        "id": "CVE-2024-38819",
+        "title": "CVE-2024-38819 - Spring Path Traversal Error",
+        "cvss_score": 7.5,
+        "severity": "HIGH",
+        "cisa": null
+    },
+    {
         "id": "CVE-2024-50379",
         "title": "CVE-2024-50379 - Apache Tomcat TOCTOU Race Condition RCE on Case Insensitive File Systems",
         "cvss_score": 9.8,
